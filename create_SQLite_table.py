@@ -1,6 +1,6 @@
 import sqlite3
 
-sqlite_file = 'reactors'    # name of the sqlite database file
+sqlite_file = 'reactors.sqlite'    # name of the sqlite database file
 table_name = 'reactors'  # name of the table to be created
 new_field = 'ID' # name of the column
 field_type = 'INTEGER'  # column data type
