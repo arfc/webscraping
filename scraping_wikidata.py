@@ -39,6 +39,8 @@ for item in data ['results']['bindings']:
 df = pd.DataFrame(re)
 
 df.head()
+# this function effectively get rid of the "Point()" part in the
+# original Coord obj
 
 def extractCoord(dfcol):
 	for i in range(len(dfcol)):
