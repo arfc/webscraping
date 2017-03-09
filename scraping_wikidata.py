@@ -80,7 +80,7 @@ def into_sql(df):
 # THIS IS NOT WORKING "probably unsupported type"
     sql = '''
     CREATE TABLE testTable(
-        'index', 'Name' OBJECT, 'Coord' OBJECT, 'Long' REAL, 'Lat' REAL
+        'index', 'Name' TEXT, 'Coord' TEXT, 'Long' REAL, 'Lat' REAL
     )
     '''
 
