@@ -1,7 +1,7 @@
 import requests
 
 header = {
-	
+
 	'yukun tan': 'wikidata scraping'
 }
 import pandas as pd
@@ -28,32 +28,66 @@ WHERE {
 url = 'https://query.wikidata.org/bigdata/namespace/wdq/sparql'
 data = requests.get(url, headers=header, params={'query': query, 'format': 'json'}).json()
 
+#data manipulation with pandas
 re = []
+
 for item in data ['results']['bindings']:
 	re.append({
 		'Name' : item['reactorsLabel']['value'],
-		'Coord' : item['coord']['value'],
-		#'Lat' : item['coord']['value'][1]
+		'Coord' : item['coord']['value']
 	})
 df = pd.DataFrame(re)
-print(len(df))
+
 df.head()
 
+def extractCoord(dfcol):
+	for i in range(len(dfcol)):
+		dfcol[i] = dfcol[i][6:-1]
+	return
+extractCoord(df['Coord'])
+
+Long = []
+Lat = []
+
+# this function takes in a pandas df col with type string obj
+# it seperates thte string with delimiter whitespace
+# hold the 2 seperated strings using lists Long and Lat
+
+def seperateCoord(dfcol, Long, Lat):
+	for i in range(len(dfcol)):
+		dfcol[i] = dfcol[i].split()
+		Long.append(dfcol[i][0])
+		Lat.append(dfcol[i][1])
+	return
+seperateCoord(df['Coord'], Long, Lat)
+# typecast from string to float
+Long = [float(i) for i in Long]
+Lat = [float(i) for i in Lat]
+
+df['Long'] = Long
+df['Lat'] = Lat
+#print(df['Long'].dtypes)
+
+#need to reorder the columns after I have all the cols
+
 # now put it into the sqlite database
+def into_sql(df):
+    sqlite_file = 'test.sqlite'
+    conn = sqlite3.connect(sqlite_file)
+    c = conn.cursor()
 
-sqlite_file = 'test.sqlite'   
-conn = sqlite3.connect(sqlite_file)
-c = conn.cursor()
+    c.execute('DROP TABLE IF EXISTS testTable;')
+# THIS IS NOT WORKING "probably unsupported type"
+    sql = '''
+    CREATE TABLE testTable(
+        'index', 'Name' OBJECT, 'Coord' OBJECT, 'Long' REAL, 'Lat' REAL
+    )
+    '''
 
-c.execute('DROP TABLE IF EXISTS testTable;')
+    c.execute(sql)
+    df.to_sql(name = 'testTable', con = conn, if_exists = 'append', index = True)
 
-sql = '''
-CREATE TABLE testTable(
-	'index', 'Name' OBJECT, 'Coord' OBJECT
-)
-'''
+    conn.close()
+    return
 
-c.execute(sql)
-df.to_sql(name = 'testTable', con = conn, if_exists = 'append', index = True)
-
-conn.close()
+#into_sql(df)
