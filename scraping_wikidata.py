@@ -42,22 +42,25 @@ def set_up_df():
     return df
 
 
-def extractCoord(dfcol):
+def extractCoord(df):
+    dfcol = df['Coord']
     for i in range(len(dfcol)):
         dfcol[i] = dfcol[i][6:-1]
-    return dfcol
+    return df
 
 
-def seperateCoord(dfcol, Long, Lat):
+def seperateCoord(dfcol):
     """this function takes in a pandas df col with type string obj
     it seperates thte string with delimiter whitespace
     hold the 2 seperated strings using lists Long and Lat
     """
+    lon = []
+    lat = []
     for i in range(len(dfcol)):
         dfcol[i] = dfcol[i].split()
-        Long.append(dfcol[i][0])
-        Lat.append(dfcol[i][1])
-    return dfcol
+        lon.append(dfcol[i][0])
+        lat.append(dfcol[i][1])
+    return lon, lat
 
 
 def into_sql(df):
@@ -66,10 +69,10 @@ def into_sql(df):
     c = conn.cursor()
 
     c.execute('DROP TABLE IF EXISTS testTable;')
-# THIS IS NOT WORKING "probably unsupported type"
+    # THIS IS NOT WORKING "probably unsupported type"
     sql = '''
     CREATE TABLE testTable(
-        'index', 'Name' TEXT, 'Coord' TEXT, 'Long' REAL, 'Lat' REAL
+        'index', 'Name' TEXT, 'Long' REAL, 'Lat' REAL
     )
     '''
     c.execute(sql)
@@ -83,16 +86,12 @@ def into_sql(df):
 
 
 df = set_up_df()
-extractCoord(df['Coord'])
-Long = []
-Lat = []
-seperateCoord(df['Coord'], Long, Lat)
+df = extractCoord(df)
+lon, lat = seperateCoord(df['Coord'])
+df.drop('Coord', axis=1, inplace=True)
+
 # typecast from string to float
-Long = [float(i) for i in Long]
+df['Long'] = [float(i) for i in lon]
+df['Lat'] = [float(i) for i in lat]
 
-Lat = [float(i) for i in Lat]
-
-df['Long'] = Long
-df['Lat'] = Lat
-# print(df['Long'].dtypes)
 into_sql(df)
