@@ -38,11 +38,14 @@ def set_up_df():
             'Coord': item['coord']['value']
         })
     df = pd.DataFrame(re)
-    df.head()  # get rid of Point() in Coord obj
     return df
 
 
 def extractCoord(df):
+    """this function takes in a pandas df col
+    it substrings every element of the col 'Coord'
+    from the 6th to 2nd last character
+    """
     dfcol = df['Coord']
     for i in range(len(dfcol)):
         dfcol[i] = dfcol[i][6:-1]
@@ -93,5 +96,4 @@ df.drop('Coord', axis=1, inplace=True)
 # typecast from string to float
 df['Long'] = [float(i) for i in lon]
 df['Lat'] = [float(i) for i in lat]
-
 into_sql(df)
