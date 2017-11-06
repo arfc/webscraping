@@ -3,7 +3,6 @@ import pandas as pd
 import sqlite3
 
 header = {
-
     'yukun tan': 'wikidata scraping'
 }
 
@@ -63,9 +62,9 @@ def set_up_df(data):
     re = []
     for item in data['results']['bindings']:
         re.append({
+            'Country': item['countryLabel']['value'],
             'Name': item['reactorsLabel']['value'],
-            'Coord': item['coord']['value'],
-            'Country': item['countryLabel']['value']
+            'Coord': item['coord']['value']
         })
     df = pd.DataFrame(re)
     return df
@@ -97,19 +96,19 @@ def seperateCoord(dfcol):
 
 
 def into_sql(df):
-    sqlite_file = 'test.sqlite'
+    sqlite_file = 'coordinates.sqlite'
     conn = sqlite3.connect(sqlite_file)
     c = conn.cursor()
 
-    c.execute('DROP TABLE IF EXISTS testTable;')
+    c.execute('DROP TABLE IF EXISTS reactors_coordinates;')
     # THIS IS NOT WORKING "probably unsupported type"
     sql = '''
-    CREATE TABLE testTable(
-        'index', 'Name' TEXT, 'Long' REAL, 'Lat' REAL, 'Country' TEXT
+    CREATE TABLE reactors_coordinates(
+        'index', 'Country' TEXT, 'Name' TEXT, 'Long' REAL, 'Lat' REAL
     )
     '''
     c.execute(sql)
-    df.to_sql(name='testTable',
+    df.to_sql(name='reactors_coordinates',
               con=conn,
               if_exists='append',
               index=True)
