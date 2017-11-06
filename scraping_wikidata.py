@@ -128,6 +128,7 @@ def set_up_and_modify_df(data):
     df['Lat'] = [float(i) for i in lat]
     return df
 
+
 df_reactors = set_up_and_modify_df(data_reactors)
 df_plants = set_up_and_modify_df(data_plants)
 df_whole = df_reactors.append(df_plants, ignore_index=True)
