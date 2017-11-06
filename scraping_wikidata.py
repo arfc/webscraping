@@ -104,14 +104,14 @@ def into_sql(df):
     # THIS IS NOT WORKING "probably unsupported type"
     sql = '''
     CREATE TABLE reactors_coordinates(
-        'index', 'Country' TEXT, 'Name' TEXT, 'Long' REAL, 'Lat' REAL
+        'Country' TEXT, 'Name' TEXT, 'Long' REAL, 'Lat' REAL
     )
     '''
     c.execute(sql)
     df.to_sql(name='reactors_coordinates',
               con=conn,
               if_exists='append',
-              index=True)
+              index=False)
 
     conn.close()
     return
