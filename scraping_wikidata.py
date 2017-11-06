@@ -31,8 +31,9 @@ WHERE {
 }
 '''
 url = 'https://query.wikidata.org/bigdata/namespace/wdq/sparql'
-data_reactors = requests.get(url, headers=header, params={'query': query_reactors, 'format':
-                                                 'json'}).json()
+data_reactors = requests.get(url, headers=header,
+                             params={'query': query_reactors,
+                                     'format': 'json'}).json()
 
 query_plants = '''
 PREFIX wd: <http://www.wikidata.org/entity/>
@@ -53,8 +54,10 @@ WHERE {
 }
 '''
 url = 'https://query.wikidata.org/bigdata/namespace/wdq/sparql'
-data_plants = requests.get(url, headers=header, params={'query': query_plants, 'format':
-                                                 'json'}).json()
+data_plants = requests.get(url, headers=header,
+                           params={'query': query_plants,
+                                   'format': 'json'}).json()
+
 
 def set_up_df(data):
     re = []
@@ -114,6 +117,7 @@ def into_sql(df):
     conn.close()
     return
 
+
 def set_up_and_modify_df(data):
     df = set_up_df(data)
     df = extractCoord(df)
@@ -126,6 +130,6 @@ def set_up_and_modify_df(data):
 
 df_reactors = set_up_and_modify_df(data_reactors)
 df_plants = set_up_and_modify_df(data_plants)
-df_whole = df_reactors.append(df_plants, ignore_index = True)
+df_whole = df_reactors.append(df_plants, ignore_index=True)
 
 into_sql(df_whole)
