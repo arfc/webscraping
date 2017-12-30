@@ -17,5 +17,5 @@ This is under a CC-BY license.
 Run:
 `python scraping_wikidata.py`
 
-Output:
+Output File:
 `coordinates.sqlite`
